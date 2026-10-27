@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:confetti}",
+      "name": "Debug Confetti",
+      "target": "Confetti",
+      "configuration": "debug",
+      "preLaunchTask": "swift: Build Debug Confetti"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:confetti}",
+      "name": "Release Confetti",
+      "target": "Confetti",
+      "configuration": "release",
+      "preLaunchTask": "swift: Build Release Confetti"
+    }
+  ]
+}

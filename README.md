@@ -21,6 +21,17 @@ Requires Xcode command line tools (Swift 5.9+), macOS 13+.
 
 Keep the app in `/Applications` so the login item keeps pointing at a stable location.
 
+## Trigger from the command line
+
+```sh
+bin/confetti            # fire confetti on all displays
+bin/confetti --silent   # fire without the party sound
+bin/confetti --sound    # fire with the party sound, even if it is turned off in the menu
+```
+
+The script opens a `confetti://fire` URL, so it also launches the app if it is not running.
+Put `bin` on your `PATH` or symlink it, e.g. `ln -s "$PWD/bin/confetti" /usr/local/bin/confetti`.
+
 ## Testing
 
 ```sh

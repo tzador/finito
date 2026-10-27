@@ -37,6 +37,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Handles `confetti://fire[?sound=0|1]`, used by bin/confetti.
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls where url.scheme == "confetti" {
+            guard url.host == "fire" || url.path == "/fire" else { continue }
+            let query = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+            let soundOverride = query.first { $0.name == "sound" }?.value.map { !["0", "false", "off", "no"].contains($0.lowercased()) }
+            confetti.fire()
+            if soundOverride ?? playSoundEnabled { sound.play() }
+        }
+    }
+
     // MARK: - Status item / menu
 
     private func setupStatusItem() {
