@@ -53,7 +53,7 @@ extension NSScreen {
 
 final class ConfettiWindow: NSWindow {
     private let skView: SKView
-    private let scene: ConfettiScene
+    private let scene: LeafScene
     var onFinished: (() -> Void)?
     var isFinished: Bool { scene.isIdle }
 
@@ -66,7 +66,7 @@ final class ConfettiWindow: NSWindow {
         skView.wantsLayer = true
         skView.layer?.backgroundColor = .clear
 
-        scene = ConfettiScene(size: size, seed: seed)
+        scene = LeafScene(size: size, seed: seed)
         scene.scaleMode = .resizeFill
         scene.backgroundColor = .clear
 

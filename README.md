@@ -1,24 +1,25 @@
 # finito
 
-Throw confetti across all your displays from the command line. Celebrate a green build,
+Blow autumn leaves across all your displays from the command line. Celebrate a green build,
 a finished task, or a merged PR with a single command.
 
 ```sh
-finito            # confetti + party sound on every connected display
+finito            # leaves + party sound on every connected display
 finito --silent   # no sound
 finito --wait     # block until the show is over (useful in scripts)
 ```
 
-A click-through, transparent overlay fires geometric confetti (squares, rectangles, triangles,
-stars, circles, hexagons, diamonds) in [Open Color](https://yeun.github.io/open-color/) hues,
-with streamers and glitter mixed in. Every launch composes a different show: the launch
-pattern (corner poppers, a centre fountain, side blasters, a heavy shower, or all of them),
-the colour theme, and a short jingle in a random key with a melodic run resolving onto a
-chord. Pass `--seed N` to replay a show you liked. The command returns immediately
-and the show plays out in detached background processes (one per display), so your terminal
-is free right away.
-Pass `--wait` to block until the last piece has left the screen and the sound has finished,
-usually within a few seconds.
+A click-through, transparent overlay sends a cloud of photographed autumn leaves (maple, oak,
+ginkgo, birch and more, 256 of them) drifting over your screen. Each leaf glides sideways on a
+tilt, stalls, drops a little faster while it swings back and banks into the new direction; most
+rock about their axis, some tumble right over, and a wandering breeze pushes the whole cloud.
+Every launch composes a different show: the launch pattern (a steady fall, a gust sweeping in
+from one side, a swirl kicked up from the bottom corners, or all of them), the wind, the
+density, and a short jingle in a random key with a melodic run resolving onto a chord.
+Pass `--seed N` to replay a show you liked. The command returns immediately and the show
+plays out in detached background processes (one per display), so your terminal is free right
+away. Pass `--wait` to block until the last leaf has left the screen and the sound has
+finished, usually within ten to fifteen seconds.
 
 Drop a file at `~/Library/Application Support/Finito/party.wav` (also `mp3`, `m4a`, `aiff`,
 `caf`) to replace the built-in synthesized party sound.
@@ -150,3 +151,10 @@ the GitHub release with the tarball and checksums, then updates `Formula/finito.
 Run with `swift run finito`. The simulation lives in
 `Sources/Finito/ConfettiScene.swift`, shapes in `Shapes.swift`, the palette in
 `OpenColor.swift`, and the sound synth in `PartySound.swift`.
+
+## Leaf artwork
+
+The leaves come from the 4×4 sheets in `Assets/`. `scripts/pack-leaves.sh` slices every sheet
+into single leaves, strips the background noise, packs them into one PNG atlas and writes it as
+base64 into `Sources/Finito/LeafAtlas.swift`, so the binary stays self-contained. Rerun it after
+changing the sheets.

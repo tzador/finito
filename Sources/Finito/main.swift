@@ -12,7 +12,7 @@ struct Options {
     var soundOnly = false
 
     static let usage = """
-    finito \(finitoVersion) — throw confetti across all your displays
+    finito \(finitoVersion) — blow autumn leaves across all your displays
 
     Usage: finito [options]
 
