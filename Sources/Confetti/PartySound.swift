@@ -58,7 +58,11 @@ final class PartySound {
 ///   0.15  chord swell: detuned saws through a closing low-pass, C major with an added 9th
 /// Everything runs through a small stereo Schroeder reverb and a soft limiter.
 struct PartySoundSynth {
+    enum Layer: CaseIterable { case popper, crackle, sparkle, chord }
+
     let sampleRate: Float
+    /// Which layers make it into the mix. Currently just the crackle and the sparkle.
+    var layers: Set<Layer> = [.crackle, .sparkle]
     private let duration: Float = 2.8
 
     func render(into format: AVAudioFormat) -> AVAudioPCMBuffer? {
@@ -67,10 +71,10 @@ struct PartySoundSynth {
         var right = [Float](repeating: 0, count: frames)
         var rng = SeededRandom(seed: 0xC0FFEE)
 
-        popper(&left, &right, &rng)
-        crackle(&left, &right, &rng)
-        sparkle(&left, &right)
-        chord(&left, &right)
+        if layers.contains(.popper) { popper(&left, &right, &rng) }
+        if layers.contains(.crackle) { crackle(&left, &right, &rng) }
+        if layers.contains(.sparkle) { sparkle(&left, &right) }
+        if layers.contains(.chord) { chord(&left, &right) }
 
         let wetL = reverb(left, delayOffset: 0)
         let wetR = reverb(right, delayOffset: 31)
