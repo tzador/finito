@@ -10,8 +10,8 @@ class Finito < Formula
   depends_on macos: :ventura
 
   def install
-    system "swift", "build", "-c", "release", "--disable-sandbox", "--package-path", "mac"
-    bin.install "mac/.build/release/finito"
+    system "swift", "build", "-c", "release", "--disable-sandbox"
+    bin.install ".build/release/finito"
   end
 
   test do
