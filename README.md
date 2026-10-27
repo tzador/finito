@@ -16,7 +16,7 @@ piece has left the screen and the sound has finished, usually within a few secon
 Drop a file at `~/Library/Application Support/Finito/party.wav` (also `mp3`, `m4a`, `aiff`,
 `caf`) to replace the built-in synthesized party sound.
 
-Currently macOS only. The layout leaves room for Linux and Windows ports later.
+macOS only.
 
 ## Install
 
@@ -50,16 +50,9 @@ mv finito /usr/local/bin/
 ### From source
 
 ```sh
-swift build -c release --package-path mac
-mac/.build/release/finito
+swift build -c release
+.build/release/finito
 ```
-
-## Repository layout
-
-- `mac/` — the Swift package for macOS.
-- `Formula/finito.rb` — the Homebrew formula.
-- `.github/workflows/mac-*.yml` — CI and tagged releases for the macOS build.
-- `scripts/release.sh` — version bump and tag helper.
 
 ## Releasing
 
@@ -76,6 +69,6 @@ the GitHub release with the tarball and checksums, then updates `Formula/finito.
 
 ## Hacking
 
-Run with `swift run --package-path mac finito`. The simulation lives in
-`mac/Sources/Finito/ConfettiScene.swift`, shapes in `Shapes.swift`, the palette in
+Run with `swift run finito`. The simulation lives in
+`Sources/Finito/ConfettiScene.swift`, shapes in `Shapes.swift`, the palette in
 `OpenColor.swift`, and the sound synth in `PartySound.swift`.

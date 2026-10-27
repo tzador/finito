@@ -1,4 +1,4 @@
-name: mac-release
+name: release
 
 on:
   push:
@@ -16,16 +16,16 @@ jobs:
       - name: Check Version.swift matches the tag
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          grep -q "finitoVersion = \"$TAG\"" mac/Sources/Finito/Version.swift \
-            || { echo "mac/Sources/Finito/Version.swift does not say $TAG"; exit 1; }
+          grep -q "finitoVersion = \"$TAG\"" Sources/Finito/Version.swift \
+            || { echo "Sources/Finito/Version.swift does not say $TAG"; exit 1; }
 
       - name: Build universal binary
-        run: swift build -c release --arch arm64 --arch x86_64 --package-path mac
+        run: swift build -c release --arch arm64 --arch x86_64
 
       - name: Package
         run: |
           mkdir -p dist
-          cp mac/.build/apple/Products/Release/finito dist/finito
+          cp .build/apple/Products/Release/finito dist/finito
           tar -C dist -czf "finito-${GITHUB_REF_NAME}-macos-universal.tar.gz" finito
           shasum -a 256 finito-*.tar.gz > checksums.txt
           cat checksums.txt
