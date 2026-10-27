@@ -21,6 +21,61 @@ Drop a file at `~/Library/Application Support/Finito/party.wav` (also `mp3`, `m4
 
 macOS only.
 
+## Celebrate when your coding agent finishes
+
+finito returns immediately, ignores anything on stdin and ignores positional arguments, so it
+drops straight into the hook systems of Claude Code and Codex without a wrapper script. Use the
+absolute path from `which finito` if your agent runs with a reduced `PATH`.
+
+### Claude Code
+
+Add a `Stop` hook to `~/.claude/settings.json` (or a project's `.claude/settings.json`). It
+fires each time Claude finishes a turn and hands control back to you:
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "finito" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Use `"command": "finito --silent"` to skip the sound. Hooks added by editing the file take
+effect in new sessions; run `/hooks` inside Claude Code to review them.
+
+### Codex
+
+Codex hooks use the same schema. Add a `Stop` hook to `~/.codex/hooks.json` (or a project's
+`.codex/hooks.json`):
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "finito", "timeout": 5 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Codex asks you to review and trust new hooks before they run; use `/hooks` inside Codex to do
+that. Alternatively, the older `notify` setting in `~/.codex/config.toml` runs a program every
+time a turn completes, passing a JSON payload as an argument that finito simply ignores:
+
+```toml
+notify = ["finito"]
+```
+
 ## Install
 
 ### Homebrew (macOS)

@@ -17,6 +17,9 @@ struct Options {
       -v, --version     print the version and exit
       -h, --help        show this help and exit
 
+    Positional arguments are ignored, so finito works as-is as a hook or
+    notify command for Claude Code and Codex (see the README).
+
     Drop a file at ~/Library/Application Support/Finito/party.wav
     (or .mp3, .m4a, .aiff, .caf) to replace the built-in party sound.
     """
@@ -35,6 +38,10 @@ struct Options {
             case "-h", "--help":
                 print(usage)
                 exit(0)
+            case _ where !arg.hasPrefix("-"):
+                // Positional arguments are ignored so finito can be used directly as a
+                // Codex `notify` program, which passes a JSON payload as the first argument.
+                continue
             default:
                 FileHandle.standardError.write("finito: unknown option '\(arg)'\n\(usage)\n".data(using: .utf8)!)
                 exit(2)
