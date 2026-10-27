@@ -24,8 +24,12 @@ Currently macOS only. The layout leaves room for Linux and Windows ports later.
 
 ```sh
 brew tap tzador/finito https://github.com/tzador/finito
+brew trust tzador/finito
 brew install finito
 ```
+
+Recent Homebrew versions refuse to load formulas from third-party taps until you trust
+the tap once with `brew trust`.
 
 The formula builds from source with the Swift toolchain, so it needs Xcode or the
 Command Line Tools and macOS 13 or later. Locally built binaries are not quarantined,
