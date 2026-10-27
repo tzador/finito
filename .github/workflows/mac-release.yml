@@ -1,4 +1,4 @@
-name: Release
+name: mac-release
 
 on:
   push:
@@ -16,25 +16,25 @@ jobs:
       - name: Check Version.swift matches the tag
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          grep -q "confettiVersion = \"$TAG\"" Sources/Confetti/Version.swift \
-            || { echo "Sources/Confetti/Version.swift does not say $TAG"; exit 1; }
+          grep -q "finitoVersion = \"$TAG\"" mac/Sources/Finito/Version.swift \
+            || { echo "mac/Sources/Finito/Version.swift does not say $TAG"; exit 1; }
 
       - name: Build universal binary
-        run: swift build -c release --arch arm64 --arch x86_64
+        run: swift build -c release --arch arm64 --arch x86_64 --package-path mac
 
       - name: Package
         run: |
           mkdir -p dist
-          cp .build/apple/Products/Release/confetti dist/confetti
-          tar -C dist -czf "confetti-${GITHUB_REF_NAME}-macos-universal.tar.gz" confetti
-          shasum -a 256 confetti-*.tar.gz > checksums.txt
+          cp mac/.build/apple/Products/Release/finito dist/finito
+          tar -C dist -czf "finito-${GITHUB_REF_NAME}-macos-universal.tar.gz" finito
+          shasum -a 256 finito-*.tar.gz > checksums.txt
           cat checksums.txt
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" confetti-*.tar.gz checksums.txt \
+          gh release create "$GITHUB_REF_NAME" finito-*.tar.gz checksums.txt \
             --title "$GITHUB_REF_NAME" --generate-notes
 
   formula:
@@ -49,15 +49,15 @@ jobs:
         run: |
           URL="https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz"
           SHA=$(curl -sL "$URL" | shasum -a 256 | cut -d' ' -f1)
-          sed -i "s|^  url \".*\"|  url \"$URL\"|" Formula/confetti.rb
-          sed -i "s|^  sha256 \".*\"|  sha256 \"$SHA\"|" Formula/confetti.rb
-          cat Formula/confetti.rb
+          sed -i "s|^  url \".*\"|  url \"$URL\"|" Formula/finito.rb
+          sed -i "s|^  sha256 \".*\"|  sha256 \"$SHA\"|" Formula/finito.rb
+          cat Formula/finito.rb
 
       - name: Commit the formula
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/confetti.rb
+          git add Formula/finito.rb
           git diff --cached --quiet && exit 0
           git commit -m "Formula: ${GITHUB_REF_NAME}"
           git push origin main

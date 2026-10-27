@@ -4,41 +4,21 @@
       "type": "swift",
       "request": "launch",
       "args": [],
-      "cwd": "${workspaceFolder:confetti}",
-      "name": "Debug Confetti",
-      "target": "confetti",
+      "cwd": "${workspaceFolder}/mac",
+      "name": "Debug finito",
+      "target": "finito",
       "configuration": "debug",
-      "preLaunchTask": "swift: Build Debug confetti"
+      "preLaunchTask": "swift: Build Debug finito"
     },
     {
       "type": "swift",
       "request": "launch",
       "args": [],
-      "cwd": "${workspaceFolder:confetti}",
-      "name": "Release Confetti",
-      "target": "confetti",
+      "cwd": "${workspaceFolder}/mac",
+      "name": "Release finito",
+      "target": "finito",
       "configuration": "release",
-      "preLaunchTask": "swift: Build Release confetti"
-    },
-    {
-      "type": "swift",
-      "request": "launch",
-      "args": [],
-      "cwd": "${workspaceFolder:confetti}",
-      "name": "Debug confetti",
-      "target": "confetti",
-      "configuration": "debug",
-      "preLaunchTask": "swift: Build Debug confetti"
-    },
-    {
-      "type": "swift",
-      "request": "launch",
-      "args": [],
-      "cwd": "${workspaceFolder:confetti}",
-      "name": "Release confetti",
-      "target": "confetti",
-      "configuration": "release",
-      "preLaunchTask": "swift: Build Release confetti"
+      "preLaunchTask": "swift: Build Release finito"
     }
   ]
 }

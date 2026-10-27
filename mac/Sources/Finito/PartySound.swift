@@ -2,7 +2,7 @@ import AVFoundation
 import AppKit
 
 /// Plays a party sound. Uses a user-supplied file if present at
-/// ~/Library/Application Support/Confetti/party.(wav|mp3|m4a|aiff), otherwise a synthesized one.
+/// ~/Library/Application Support/Finito/party.(wav|mp3|m4a|aiff), otherwise a synthesized one.
 final class PartySound {
     private let engine = AVAudioEngine()
     private let player = AVAudioPlayerNode()
@@ -43,7 +43,7 @@ final class PartySound {
 
     private static func loadCustomSound() -> NSSound? {
         guard let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return nil }
-        let dir = support.appendingPathComponent("Confetti")
+        let dir = support.appendingPathComponent("Finito")
         for ext in ["wav", "mp3", "m4a", "aiff", "aif", "caf"] {
             let url = dir.appendingPathComponent("party.\(ext)")
             if FileManager.default.fileExists(atPath: url.path), let sound = NSSound(contentsOf: url, byReference: false) {

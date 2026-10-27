@@ -6,16 +6,16 @@ struct Options {
     var playSound = true
 
     static let usage = """
-    confetti \(confettiVersion) — throw confetti across all your displays
+    finito \(finitoVersion) — throw confetti across all your displays
 
-    Usage: confetti [options]
+    Usage: finito [options]
 
     Options:
       -s, --silent      do not play the party sound
       -v, --version     print the version and exit
       -h, --help        show this help and exit
 
-    Drop a file at ~/Library/Application Support/Confetti/party.wav
+    Drop a file at ~/Library/Application Support/Finito/party.wav
     (or .mp3, .m4a, .aiff, .caf) to replace the built-in party sound.
     """
 
@@ -26,13 +26,13 @@ struct Options {
             case "-s", "--silent", "--no-sound":
                 options.playSound = false
             case "-v", "--version":
-                print(confettiVersion)
+                print(finitoVersion)
                 exit(0)
             case "-h", "--help":
                 print(usage)
                 exit(0)
             default:
-                FileHandle.standardError.write("confetti: unknown option '\(arg)'\n\(usage)\n".data(using: .utf8)!)
+                FileHandle.standardError.write("finito: unknown option '\(arg)'\n\(usage)\n".data(using: .utf8)!)
                 exit(2)
             }
         }

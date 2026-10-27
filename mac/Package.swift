@@ -2,15 +2,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "confetti",
+    name: "finito",
     platforms: [.macOS(.v13)],
     products: [
-        .executable(name: "confetti", targets: ["Confetti"])
+        .executable(name: "finito", targets: ["Finito"])
     ],
     targets: [
         .executableTarget(
-            name: "Confetti",
-            path: "Sources/Confetti"
+            name: "Finito",
+            path: "Sources/Finito"
         )
     ]
 )
