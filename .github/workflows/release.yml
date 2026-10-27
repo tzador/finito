@@ -12,20 +12,30 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
 
-      - name: Check Version.swift matches the tag
+      - name: Check Cargo.toml matches the tag
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          grep -q "finitoVersion = \"$TAG\"" Sources/Finito/Version.swift \
-            || { echo "Sources/Finito/Version.swift does not say $TAG"; exit 1; }
+          grep -q "^version = \"$TAG\"" Cargo.toml \
+            || { echo "Cargo.toml does not say version $TAG"; exit 1; }
 
       - name: Build universal binary
-        run: swift build -c release --arch arm64 --arch x86_64
+        run: |
+          cargo build --release --locked --target aarch64-apple-darwin
+          cargo build --release --locked --target x86_64-apple-darwin
+          mkdir -p dist
+          lipo -create -output dist/finito \
+            target/aarch64-apple-darwin/release/finito \
+            target/x86_64-apple-darwin/release/finito
+          lipo -info dist/finito
+          dist/finito --version
 
       - name: Package
         run: |
-          mkdir -p dist
-          cp .build/apple/Products/Release/finito dist/finito
           tar -C dist -czf "finito-${GITHUB_REF_NAME}-macos-universal.tar.gz" finito
           shasum -a 256 finito-*.tar.gz > checksums.txt
           cat checksums.txt

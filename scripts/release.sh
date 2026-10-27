@@ -8,10 +8,11 @@ VERSION="${1:-}"
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "usage: $0 X.Y.Z" >&2; exit 2; }
 [[ -z "$(git status --porcelain)" ]] || { echo "working tree is not clean" >&2; exit 1; }
 
-sed -i '' "s/^let finitoVersion = \".*\"/let finitoVersion = \"$VERSION\"/" Sources/Finito/Version.swift
+sed -i '' "s/^version = \".*\"/version = \"$VERSION\"/" Cargo.toml
+cargo update --workspace --offline >/dev/null
 sed -i '' "s|/archive/refs/tags/v[0-9.]*\.tar\.gz|/archive/refs/tags/v$VERSION.tar.gz|" Formula/finito.rb
 
-git add Sources/Finito/Version.swift Formula/finito.rb
+git add Cargo.toml Cargo.lock Formula/finito.rb
 git diff --cached --quiet || git commit -q -m "Release v$VERSION"
 git tag -a "v$VERSION" -m "v$VERSION"
 echo "Tagged v$VERSION. Push with: git push origin main v$VERSION"

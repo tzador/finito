@@ -39,9 +39,9 @@ brew install finito
 Recent Homebrew versions refuse to load formulas from third-party taps until you trust
 the tap once with `brew trust`.
 
-The formula builds from source with the Swift toolchain, so it needs Xcode or the
-Command Line Tools and macOS 13 or later. Locally built binaries are not quarantined,
-so there is no Gatekeeper prompt.
+The formula builds from source with the Rust toolchain (Homebrew installs it as a build
+dependency) and needs macOS 13 or later. Locally built binaries are not quarantined, so
+there is no Gatekeeper prompt.
 
 ### Prebuilt binary
 
@@ -57,9 +57,11 @@ mv finito /usr/local/bin/
 
 ### From source
 
+With a Rust toolchain installed (<https://rustup.rs>):
+
 ```sh
-swift build -c release
-.build/release/finito
+cargo build --release
+target/release/finito
 ```
 
 ## Celebrate when your coding agent finishes
@@ -138,23 +140,26 @@ notify = ["finito"]
 Releases are built by GitHub Actions from git tags.
 
 ```sh
-scripts/release.sh 0.2.0           # bumps Version.swift and the formula, commits, tags v0.2.0
+scripts/release.sh 0.2.0           # bumps Cargo.toml and the formula, commits, tags v0.2.0
 git push origin main v0.2.0
 ```
 
-The workflow checks that `Version.swift` matches the tag, builds a universal binary, creates
-the GitHub release with the tarball and checksums, then updates `Formula/finito.rb` on
-`main` with the tagged source tarball's URL and SHA-256.
+The workflow checks that the version in `Cargo.toml` matches the tag, builds a universal
+binary (Apple Silicon and Intel, joined with `lipo`), creates the GitHub release with the
+tarball and checksums, then updates `Formula/finito.rb` on `main` with the tagged source
+tarball's URL and SHA-256.
 
 ## Hacking
 
-Run with `swift run finito`. The simulation lives in
-`Sources/Finito/ConfettiScene.swift`, shapes in `Shapes.swift`, the palette in
-`OpenColor.swift`, and the sound synth in `PartySound.swift`.
+Run with `cargo run --release`. The sources are in `src/`: the simulation lives in `scene.rs`,
+the transparent overlay windows in `overlay.rs` (winit plus a few AppKit calls), the sprite
+renderer in `render.rs` and `shader.wgsl` (wgpu on Metal), the per-display child processes in
+`detach.rs`, and the sound synth in `sound.rs`. Each display is driven by its own detached
+process so every screen runs at its own refresh rate.
 
 ## Leaf artwork
 
-The leaves come from the 4×4 sheets in `Assets/`. `scripts/pack-leaves.sh` slices every sheet
-into single leaves, strips the background noise, packs them into one PNG atlas and writes it as
-base64 into `Sources/Finito/LeafAtlas.swift`, so the binary stays self-contained. Rerun it after
-changing the sheets.
+The leaves come from the 4×4 sheets in `Assets/`. `build.rs` slices every sheet into single
+leaves, strips the background noise, packs them into one premultiplied PNG atlas and embeds it
+into the binary together with the cell rectangles, so finito stays self-contained. Cargo reruns
+it whenever a sheet changes.

@@ -1,0 +1,29 @@
+[package]
+name = "finito"
+version = "0.5.0"
+edition = "2024"
+description = "Blow autumn leaves across all your displays from the command line"
+license = "MIT"
+repository = "https://github.com/tzador/finito"
+build = "build.rs"
+
+[dependencies]
+bytemuck = "1"
+libc = "0.2"
+objc2 = "0.6"
+objc2-foundation = "0.3"
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSWindow", "NSScreen", "NSView", "NSResponder", "NSColor", "NSGraphics"] }
+objc2-avf-audio = { version = "0.3", default-features = false, features = ["std", "AVAudioPlayer"] }
+png = "0.18"
+pollster = "1"
+raw-window-handle = "0.6"
+wgpu = { version = "30", default-features = false, features = ["std", "metal", "wgsl"] }
+winit = "0.30"
+
+[build-dependencies]
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
