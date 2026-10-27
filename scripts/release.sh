@@ -12,6 +12,6 @@ sed -i '' "s/^let finitoVersion = \".*\"/let finitoVersion = \"$VERSION\"/" mac/
 sed -i '' "s|/archive/refs/tags/v[0-9.]*\.tar\.gz|/archive/refs/tags/v$VERSION.tar.gz|" Formula/finito.rb
 
 git add mac/Sources/Finito/Version.swift Formula/finito.rb
-git commit -q -m "Release v$VERSION"
+git diff --cached --quiet || git commit -q -m "Release v$VERSION"
 git tag -a "v$VERSION" -m "v$VERSION"
 echo "Tagged v$VERSION. Push with: git push origin main v$VERSION"
