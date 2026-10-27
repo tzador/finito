@@ -1,20 +1,33 @@
 import AppKit
 import SpriteKit
 
-/// Shows a click-through, transparent overlay on every connected display and fires confetti on each.
+/// Shows a click-through, transparent overlay on the requested displays and fires confetti on each.
+///
+/// Normally a process drives exactly one display (see `main.swift`): SpriteKit schedules every
+/// `SKView` in a process through one shared frame callback, and with views on two different
+/// displays one of them is starved down to a few frames per second.
 final class ConfettiController {
     private var windows: [ConfettiWindow] = []
     /// Called once every display has finished its animation and the overlays are gone.
     var onFinished: (() -> Void)?
 
-    func fire(seed: UInt32) {
+    /// - Parameter displays: the displays to cover, or `nil` for every connected display.
+    func fire(seed: UInt32, displays: [CGDirectDisplayID]? = nil) {
         if windows.isEmpty {
-            windows = NSScreen.screens.map { screen in
+            let screens = NSScreen.screens.filter { screen in
+                displays.map { ids in screen.displayID.map(ids.contains) ?? false } ?? true
+            }
+            windows = screens.map { screen in
                 let window = ConfettiWindow(screen: screen, seed: seed)
                 window.onFinished = { [weak self] in self?.windowFinished() }
                 return window
             }
             windows.forEach { $0.orderFrontRegardless() }
+        }
+        guard !windows.isEmpty else {
+            // Nothing to show (display unplugged between spawn and launch): finish right away.
+            DispatchQueue.main.async { [weak self] in self?.onFinished?() }
+            return
         }
         windows.forEach { $0.burst() }
     }
@@ -24,6 +37,15 @@ final class ConfettiController {
         windows.forEach { $0.orderOut(nil) }
         windows.removeAll()
         onFinished?()
+    }
+}
+
+extension NSScreen {
+    /// The Core Graphics display ID backing this screen; stable across processes, unlike the
+    /// index in `NSScreen.screens`.
+    var displayID: CGDirectDisplayID? {
+        (deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)
+            .map { CGDirectDisplayID($0.uint32Value) }
     }
 }
 

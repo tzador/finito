@@ -15,7 +15,8 @@ with streamers and glitter mixed in. Every launch composes a different show: the
 pattern (corner poppers, a centre fountain, side blasters, a heavy shower, or all of them),
 the colour theme, and a short jingle in a random key with a melodic run resolving onto a
 chord. Pass `--seed N` to replay a show you liked. The command returns immediately
-and the show plays out in a detached background process, so your terminal is free right away.
+and the show plays out in detached background processes (one per display), so your terminal
+is free right away.
 Pass `--wait` to block until the last piece has left the screen and the sound has finished,
 usually within a few seconds.
 

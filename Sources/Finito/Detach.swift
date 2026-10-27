@@ -4,8 +4,8 @@ import Foundation
 /// Re-launches this executable as a detached background process and returns its pid.
 ///
 /// `fork()` is not an option once AppKit/CoreFoundation are loaded, so we `posix_spawn` the same
-/// binary in a new session with stdin/stdout/stderr pointing at /dev/null. The caller is expected
-/// to exit right away; the child is reparented to launchd and outlives the terminal.
+/// binary in a new session with stdin/stdout/stderr pointing at /dev/null. The child outlives the
+/// terminal; the caller either exits right away or `waitpid`s on the returned pid.
 func spawnDetached(arguments: [String]) throws -> pid_t {
     var size: UInt32 = 0
     _ = _NSGetExecutablePath(nil, &size)
