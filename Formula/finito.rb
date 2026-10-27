@@ -1,7 +1,7 @@
 class Finito < Formula
   desc "Throw confetti across all your displays from the command-line"
   homepage "https://github.com/tzador/finito"
-  url "https://github.com/tzador/finito/archive/refs/tags/v0.4.0.tar.gz"
+  url "https://github.com/tzador/finito/archive/refs/tags/v0.5.0.tar.gz"
   sha256 "47402adca43b490c491544f15bd014f177dee6fa3241ec6af5ccc31dff448b99"
   license "MIT"
   head "https://github.com/tzador/finito.git", branch: "main"
