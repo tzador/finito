@@ -1,61 +1,35 @@
 # finito
 
-Throw confetti across all your displays from the command line. Celebrate a green build,
-a finished task, or a merged PR with a single command.
+Throw a celebration across all your displays from the command line. Mark a green build,
+a finished task, or a merged PR with confetti, fireworks, bubbles, a laser show, or whatever
+finito picks for you.
 
 ```sh
-finito            # confetti + party sound on every connected display
-finito --silent   # no sound
-finito --wait     # block until the show is over (useful in scripts)
+finito                              # random visual with a sound that fits it
+finito --visual fireworks           # pick the visual, random fitting sound
+finito --sound tada                 # random visual, pick the sound
+finito --visual stars --sound chime
+finito --silent                     # no sound
+finito --visual none --sound coin   # sound only
+finito --list                       # everything available
+finito --wait                       # block until the show is over (useful in scripts)
 ```
 
-A click-through, transparent overlay fires geometric confetti (squares, rectangles, triangles,
-stars, circles, hexagons, diamonds) in [Open Color](https://yeun.github.io/open-color/) mid-tones
-from both bottom corners, followed by a short rain from the top. The command returns immediately
-and the show plays out in a detached background process, so your terminal is free right away.
-Pass `--wait` to block until the last piece has left the screen and the sound has finished,
-usually within a few seconds.
+Every effect plays on a click-through, transparent overlay on each connected display, and the
+command returns immediately while the show runs in a detached background process. Pass `--wait`
+to block until the last piece has left the screen and the sound has finished.
 
-Drop a file at `~/Library/Application Support/Finito/party.wav` (also `mp3`, `m4a`, `aiff`,
-`caf`) to replace the built-in synthesized party sound.
+Visuals: `confetti`, `stars`, `bubbles`, `rainbow`, `fireworks`, `snow`, `balloons`, `hearts`,
+`lasers`, `matrix`, `fireflies`, `shockwave`.
+
+Sounds: `party`, `fanfare`, `tada`, `chime`, `coin`, `powerup`, `applause`, `drumroll`, `pop`,
+`sparkle`, `whoosh`. All of them are synthesized at launch; there are no bundled assets.
+
+Drop audio files (`wav`, `mp3`, `m4a`, `aiff`, `caf`) into
+`~/Library/Application Support/Finito/sounds/` to add your own. The file name becomes the sound
+name and shows up under `--list`; a custom file with a built-in name replaces that sound.
 
 macOS only.
-
-## Install
-
-### Homebrew (macOS)
-
-```sh
-brew tap tzador/finito https://github.com/tzador/finito
-brew trust tzador/finito
-brew install finito
-```
-
-Recent Homebrew versions refuse to load formulas from third-party taps until you trust
-the tap once with `brew trust`.
-
-The formula builds from source with the Swift toolchain, so it needs Xcode or the
-Command Line Tools and macOS 13 or later. Locally built binaries are not quarantined,
-so there is no Gatekeeper prompt.
-
-### Prebuilt binary
-
-Each [release](https://github.com/tzador/finito/releases) ships a universal (Apple Silicon
-and Intel) `finito-vX.Y.Z-macos-universal.tar.gz`. The binary is not notarized, so after
-downloading you may need to clear the quarantine flag:
-
-```sh
-tar -xzf finito-v*-macos-universal.tar.gz
-xattr -d com.apple.quarantine finito
-mv finito /usr/local/bin/
-```
-
-### From source
-
-```sh
-swift build -c release
-.build/release/finito
-```
 
 ## Celebrate when your coding agent finishes
 
@@ -143,6 +117,8 @@ the GitHub release with the tarball and checksums, then updates `Formula/finito.
 
 ## Hacking
 
-Run with `swift run finito`. The simulation lives in
-`Sources/Finito/ConfettiScene.swift`, shapes in `Shapes.swift`, the palette in
-`OpenColor.swift`, and the sound synth in `PartySound.swift`.
+Run with `swift run finito --visual stars --wait`. Visuals live in `Sources/Finito/Visuals/`,
+one scene per effect on top of `EffectScene`, which provides timers, spawners and the idle
+detection that ends the process. Sounds live in `Sources/Finito/Sounds/`: `Mixer.swift` holds
+the DSP building blocks and `Sound.swift` one recipe per sound. `Visual.pairedSounds` is the
+table a random pick draws from.
