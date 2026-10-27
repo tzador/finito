@@ -41,7 +41,7 @@ final class ConfettiScene: SKScene {
     private var elapsed: CGFloat = 0
     private var notifiedIdle = true
 
-    private var gravity: CGFloat { size.height * 1.3 }
+    private var gravity: CGFloat { size.height * 2.2 }
     private let maxParticles = 1400
 
     override func didMove(to view: SKView) {
@@ -78,7 +78,7 @@ final class ConfettiScene: SKScene {
         }
 
         // A gentle rain from the top that fills the screen as the burst settles.
-        spawners.append(Spawner(remaining: 2.6, rate: 110) { [unowned self] in
+        spawners.append(Spawner(remaining: 1.8, rate: 130) { [unowned self] in
             self.rainParticle()
         })
     }
@@ -91,7 +91,7 @@ final class ConfettiScene: SKScene {
         return makeParticle(
             position: CGPoint(x: origin.x + .random(in: -20...20), y: origin.y),
             velocity: CGVector(dx: cos(theta) * speed, dy: sin(theta) * speed),
-            life: .random(in: 5.5...8.5)
+            life: .random(in: 3.5...5.5)
         )
     }
 
@@ -99,8 +99,8 @@ final class ConfettiScene: SKScene {
         let h = size.height
         return makeParticle(
             position: CGPoint(x: .random(in: -20...(size.width + 20)), y: h + 30),
-            velocity: CGVector(dx: .random(in: -h * 0.05...h * 0.05), dy: -h * .random(in: 0.05...0.2)),
-            life: .random(in: 7...10)
+            velocity: CGVector(dx: .random(in: -h * 0.05...h * 0.05), dy: -h * .random(in: 0.15...0.4)),
+            life: .random(in: 4...6)
         )
     }
 
@@ -116,7 +116,7 @@ final class ConfettiScene: SKScene {
         addChild(node)
 
         // Lighter (smaller) pieces have a lower terminal velocity: terminal = gravity / drag.
-        let terminal = h * CGFloat.random(in: 0.09...0.22) * (pieceSize / 16).squareRoot()
+        let terminal = h * CGFloat.random(in: 0.22...0.5) * (pieceSize / 16).squareRoot()
         return Particle(
             node: node,
             position: position,
