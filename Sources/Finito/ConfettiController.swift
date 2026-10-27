@@ -11,7 +11,8 @@ final class ConfettiController {
     /// Called once every display has finished its animation and the overlays are gone.
     var onFinished: (() -> Void)?
 
-    /// - Parameter displays: the displays to cover, or `nil` for every connected display.
+    /// - Parameter displays: the displays to cover, or `nil` for every connected display. An
+    ///   empty list shows nothing and finishes at once (the sound-only process uses this).
     func fire(seed: UInt32, displays: [CGDirectDisplayID]? = nil) {
         if windows.isEmpty {
             let screens = NSScreen.screens.filter { screen in
@@ -25,7 +26,8 @@ final class ConfettiController {
             windows.forEach { $0.orderFrontRegardless() }
         }
         guard !windows.isEmpty else {
-            // Nothing to show (display unplugged between spawn and launch): finish right away.
+            // Nothing to show (sound-only process, or the display was unplugged between spawn
+            // and launch): finish right away.
             DispatchQueue.main.async { [weak self] in self?.onFinished?() }
             return
         }

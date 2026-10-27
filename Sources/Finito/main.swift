@@ -6,8 +6,10 @@ struct Options {
     var playSound = true
     var wait = false
     var seed: UInt32?
-    /// Internal: drive only this display. Set by the parent on each child it spawns.
+    /// Internal: drive only this display. Set by the parent on each drawing child it spawns.
     var display: CGDirectDisplayID?
+    /// Internal: play the sound and nothing else. Set by the parent on the sound child.
+    var soundOnly = false
 
     static let usage = """
     finito \(finitoVersion) — throw confetti across all your displays
@@ -51,6 +53,9 @@ struct Options {
                     exit(2)
                 }
                 options.display = display
+                options.wait = true
+            case "--sound-only":
+                options.soundOnly = true
                 options.wait = true
             case "-w", "--wait":
                 options.wait = true
@@ -123,20 +128,23 @@ if options.seed == nil {
     options.seed = UInt32(truncatingIfNeeded: Int(Date().timeIntervalSince1970 * 1000)) ^ UInt32(getpid())
 }
 
-// Every display gets a process of its own. SpriteKit drives all of a process's views from one
-// shared frame scheduler, and with views on two different displays one of them is starved to a
-// few frames per second, so that screen crawls and the show never ends. The parent spawns one
-// detached child per display (only the first plays the sound) and either returns right away or,
-// with `--wait`, waits for all of them. A child drives just the display it was given.
+// Every display gets a process of its own, and so does the sound. SpriteKit drives all of a
+// process's views from one shared frame scheduler, and with views on two different displays one
+// of them is starved to a few frames per second, so that screen crawls and the show never ends.
+// The parent spawns one detached drawing child per display plus one child that only plays the
+// sound, and either returns right away or, with `--wait`, waits for all of them.
 var displays: [CGDirectDisplayID]? = options.display.map { [$0] }
+if options.soundOnly { displays = [] }
 var children: [pid_t] = []
-if options.display == nil {
+if options.display == nil, !options.soundOnly {
     let connected = NSScreen.screens.compactMap(\.displayID)
     do {
         for display in connected {
-            var childArguments = ["--display", String(display), "--seed", String(options.seed!)]
-            if !options.playSound || !children.isEmpty { childArguments.append("--silent") }
+            let childArguments = ["--display", String(display), "--seed", String(options.seed!), "--silent"]
             children.append(try spawnDetached(arguments: childArguments))
+        }
+        if options.playSound {
+            children.append(try spawnDetached(arguments: ["--sound-only", "--seed", String(options.seed!)]))
         }
         if options.wait {
             for pid in children {
@@ -147,9 +155,9 @@ if options.display == nil {
         exit(0)
     } catch {
         FileHandle.standardError.write("finito: \(error); running in the foreground\n".data(using: .utf8)!)
-        // Children already spawned cover their displays (and the sound); do the rest here.
+        // The drawing children spawned before the failure cover their displays; the sound child
+        // is spawned last, so it never got started. Do the rest in this process.
         displays = Array(connected.dropFirst(children.count))
-        if !children.isEmpty { options.playSound = false }
     }
 }
 
