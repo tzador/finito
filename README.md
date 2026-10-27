@@ -19,7 +19,7 @@ density, and a short jingle in a random key with a melodic run resolving onto a 
 Pass `--seed N` to replay a show you liked. The command returns immediately and the show
 plays out in detached background processes (one per display), so your terminal is free right
 away. Pass `--wait` to block until the last leaf has left the screen and the sound has
-finished, usually within ten to fifteen seconds.
+finished, usually within six or seven seconds.
 
 Drop a file at `~/Library/Application Support/Finito/party.wav` (also `mp3`, `m4a`, `aiff`,
 `caf`) to replace the built-in synthesized party sound.

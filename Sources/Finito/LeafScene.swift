@@ -75,7 +75,7 @@ final class LeafScene: SKScene {
             gustFromLeft: rng.nextUnit() < 0.5,
             windStrength: CGFloat(0.4 + rng.nextUnit() * 0.9),
             density: CGFloat(0.75 + rng.nextUnit() * 0.6),
-            duration: CGFloat(2.2 + rng.nextUnit() * 1.8)
+            duration: CGFloat(1.1 + rng.nextUnit() * 0.9)
         )
         super.init(size: size)
     }
@@ -114,16 +114,16 @@ final class LeafScene: SKScene {
                 self.fallingLeaf()
             })
         }
-        func gust(fromLeft: Bool, duration: CGFloat = 1.4, rate: CGFloat = 110) {
+        func gust(fromLeft: Bool, duration: CGFloat = 0.8, rate: CGFloat = 170) {
             spawners.append(Spawner(remaining: duration, rate: rate * density) { [unowned self] in
                 self.gustLeaf(fromLeft: fromLeft)
             })
         }
         func swirl(at origin: CGPoint, angle: CGFloat, delay: CGFloat = 0) {
-            spawners.append(Spawner(delay: delay, remaining: 0.3, rate: 320 * density) { [unowned self] in
+            spawners.append(Spawner(delay: delay, remaining: 0.2, rate: 450 * density) { [unowned self] in
                 self.swirlLeaf(origin: origin, angle: angle, power: 1)
             })
-            spawners.append(Spawner(delay: delay, remaining: 1.0, rate: 50 * density) { [unowned self] in
+            spawners.append(Spawner(delay: delay, remaining: 0.6, rate: 70 * density) { [unowned self] in
                 self.swirlLeaf(origin: origin, angle: angle, power: 0.75)
             })
         }
@@ -131,21 +131,21 @@ final class LeafScene: SKScene {
         switch design.pattern {
         case .fall:
             // A steady shower from above, nothing else.
-            fall(duration: design.duration + 0.5, rate: 60)
+            fall(duration: design.duration + 0.3, rate: 95)
         case .gust:
             // A gust sweeps a cloud of leaves in from one side, and a few more keep falling after.
             gust(fromLeft: design.gustFromLeft)
-            fall(duration: design.duration * 0.7, rate: 30, delay: 0.5)
+            fall(duration: design.duration * 0.7, rate: 50, delay: 0.25)
         case .swirl:
             // Leaves kicked up from both bottom corners, whirling up before they settle.
             swirl(at: CGPoint(x: w * 0.04, y: -20), angle: .pi / 2 - 0.55)
-            swirl(at: CGPoint(x: w * 0.96, y: -20), angle: .pi / 2 + 0.55, delay: 0.15)
-            fall(duration: design.duration * 0.6, rate: 35, delay: 0.3)
+            swirl(at: CGPoint(x: w * 0.96, y: -20), angle: .pi / 2 + 0.55, delay: 0.1)
+            fall(duration: design.duration * 0.6, rate: 55, delay: 0.15)
         case .everything:
-            gust(fromLeft: design.gustFromLeft, duration: 1.1, rate: 90)
+            gust(fromLeft: design.gustFromLeft, duration: 0.6, rate: 140)
             let corner = design.gustFromLeft ? CGPoint(x: w * 0.96, y: -20) : CGPoint(x: w * 0.04, y: -20)
-            swirl(at: corner, angle: design.gustFromLeft ? .pi / 2 + 0.55 : .pi / 2 - 0.55, delay: 0.4)
-            fall(duration: design.duration, rate: 45, delay: 0.3)
+            swirl(at: corner, angle: design.gustFromLeft ? .pi / 2 + 0.55 : .pi / 2 - 0.55, delay: 0.2)
+            fall(duration: design.duration, rate: 70, delay: 0.15)
         }
     }
 
@@ -155,7 +155,7 @@ final class LeafScene: SKScene {
         return makeLeaf(
             depth: depth,
             position: CGPoint(x: .random(in: -size.width * 0.05...size.width * 1.05), y: h + h * 0.08),
-            velocity: CGVector(dx: wind(at: h, depth: depth), dy: -h * .random(in: 0.1...0.25) * depth)
+            velocity: CGVector(dx: wind(at: h, depth: depth), dy: -h * .random(in: 0.2...0.5) * depth)
         )
     }
 
@@ -212,10 +212,10 @@ final class LeafScene: SKScene {
             velocity: velocity,
             depth: depth,
             size: longAxis,
-            descent: h * CGFloat.random(in: 0.2...0.32) * depth,
-            response: .random(in: 1.1...2.4),
-            glideSpeed: h * CGFloat.random(in: 0.12...0.32) * depth,
-            glideFrequency: .random(in: 1.5...3.2),
+            descent: h * CGFloat.random(in: 0.4...0.64) * depth,
+            response: .random(in: 1.8...3.5),
+            glideSpeed: h * CGFloat.random(in: 0.18...0.42) * depth,
+            glideFrequency: .random(in: 2.2...4.2),
             glidePhase: .random(in: 0...(2 * .pi)),
             rotation: .random(in: 0...(2 * .pi)),
             spin: .random(in: -0.9...0.9),
@@ -223,7 +223,7 @@ final class LeafScene: SKScene {
             flip: .random(in: 0...(2 * .pi)),
             flipSpeed: tumbles ? .random(in: 3...7) * (Bool.random() ? 1 : -1) : .random(in: 0.8...2.2),
             flipRange: tumbles ? .infinity : .random(in: 0.35...1.1),
-            life: 14
+            life: 8
         )
     }
 
@@ -266,7 +266,7 @@ final class LeafScene: SKScene {
         let breeze = (sin(t * 0.5) * 0.5 + sin(t * 1.3 + 1.3) * 0.3 + sin(t * 2.9 + 0.4) * 0.15) * design.windStrength
         var wind = breeze * h * 0.14
         if design.pattern == .gust || design.pattern == .everything {
-            let push = h * 0.7 * design.windStrength * exp(-t / 1.7)
+            let push = h * 0.7 * design.windStrength * exp(-t / 1.0)
             wind += design.gustFromLeft ? push : -push
         }
         return wind * (0.6 + 0.6 * min(1, max(0, y / h))) * depth
