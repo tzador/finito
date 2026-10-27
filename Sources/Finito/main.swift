@@ -14,7 +14,7 @@ struct Options {
 
     Options:
       -s, --silent      do not play the party sound
-      --seed N          replay a particular party sound (each run composes a new one)
+      --seed N          replay a particular show (each run composes a new one)
       -w, --wait        stay in the foreground until the animation and sound finish
       -v, --version     print the version and exit
       -h, --help        show this help and exit
@@ -81,7 +81,7 @@ final class CLIDelegate: NSObject, NSApplicationDelegate {
             self?.overlayDone = true
             self?.exitIfDone()
         }
-        confetti.fire()
+        confetti.fire(seed: options.seed ?? 1)
 
         if options.playSound {
             let sound = PartySound(seed: options.seed ?? 1)

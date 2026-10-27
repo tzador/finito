@@ -7,10 +7,10 @@ final class ConfettiController {
     /// Called once every display has finished its animation and the overlays are gone.
     var onFinished: (() -> Void)?
 
-    func fire() {
+    func fire(seed: UInt32) {
         if windows.isEmpty {
             windows = NSScreen.screens.map { screen in
-                let window = ConfettiWindow(screen: screen)
+                let window = ConfettiWindow(screen: screen, seed: seed)
                 window.onFinished = { [weak self] in self?.windowFinished() }
                 return window
             }
@@ -33,7 +33,7 @@ final class ConfettiWindow: NSWindow {
     var onFinished: (() -> Void)?
     var isFinished: Bool { scene.isIdle }
 
-    init(screen: NSScreen) {
+    init(screen: NSScreen, seed: UInt32) {
         let size = screen.frame.size
         skView = SKView(frame: NSRect(origin: .zero, size: size))
         skView.allowsTransparency = true
@@ -42,7 +42,7 @@ final class ConfettiWindow: NSWindow {
         skView.wantsLayer = true
         skView.layer?.backgroundColor = .clear
 
-        scene = ConfettiScene(size: size)
+        scene = ConfettiScene(size: size, seed: seed)
         scene.scaleMode = .resizeFill
         scene.backgroundColor = .clear
 

@@ -10,8 +10,11 @@ finito --wait     # block until the show is over (useful in scripts)
 ```
 
 A click-through, transparent overlay fires geometric confetti (squares, rectangles, triangles,
-stars, circles, hexagons, diamonds) in [Open Color](https://yeun.github.io/open-color/) mid-tones
-from both bottom corners, followed by a short rain from the top. The command returns immediately
+stars, circles, hexagons, diamonds) in [Open Color](https://yeun.github.io/open-color/) hues,
+with streamers and glitter mixed in. Every launch composes a different show: the launch
+pattern (corner poppers, a centre fountain, side blasters, a heavy shower, or all of them),
+the colour theme, and a short jingle in a random key with a melodic run resolving onto a
+chord. Pass `--seed N` to replay a show you liked. The command returns immediately
 and the show plays out in a detached background process, so your terminal is free right away.
 Pass `--wait` to block until the last piece has left the screen and the sound has finished,
 usually within a few seconds.
