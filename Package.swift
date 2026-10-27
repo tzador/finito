@@ -2,13 +2,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "Confetti",
+    name: "confetti",
     platforms: [.macOS(.v13)],
+    products: [
+        .executable(name: "confetti", targets: ["Confetti"])
+    ],
     targets: [
         .executableTarget(
             name: "Confetti",
-            path: "Sources/Confetti",
-            swiftSettings: [.unsafeFlags(["-parse-as-library"])]
+            path: "Sources/Confetti"
         )
     ]
 )

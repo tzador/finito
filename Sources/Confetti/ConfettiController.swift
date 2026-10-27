@@ -4,6 +4,8 @@ import SpriteKit
 /// Shows a click-through, transparent overlay on every connected display and fires confetti on each.
 final class ConfettiController {
     private var windows: [ConfettiWindow] = []
+    /// Called once every display has finished its animation and the overlays are gone.
+    var onFinished: (() -> Void)?
 
     func fire() {
         if windows.isEmpty {
@@ -21,6 +23,7 @@ final class ConfettiController {
         guard windows.allSatisfy({ $0.isFinished }) else { return }
         windows.forEach { $0.orderOut(nil) }
         windows.removeAll()
+        onFinished?()
     }
 }
 

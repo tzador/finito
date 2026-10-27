@@ -19,20 +19,25 @@ final class PartySound {
         buffer = PartySoundSynth(sampleRate: Float(format.sampleRate)).render(into: format)
     }
 
-    func play() {
+    /// Plays the sound; `completion` runs on the main queue once playback has finished.
+    func play(completion: (() -> Void)? = nil) {
         if let customSound {
             customSound.stop()
             customSound.play()
+            DispatchQueue.main.asyncAfter(deadline: .now() + customSound.duration + 0.1) { completion?() }
             return
         }
-        guard let buffer else { return }
+        guard let buffer else { completion?(); return }
         do {
             if !engine.isRunning { try engine.start() }
             player.stop()
-            player.scheduleBuffer(buffer, at: nil, options: .interrupts)
+            player.scheduleBuffer(buffer, at: nil, options: .interrupts, completionCallbackType: .dataPlayedBack) { _ in
+                DispatchQueue.main.async { completion?() }
+            }
             player.play()
         } catch {
             NSLog("Audio engine failed: \(error)")
+            completion?()
         }
     }
 

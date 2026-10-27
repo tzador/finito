@@ -1,39 +1,67 @@
-# Confetti
+# confetti
 
-A tiny macOS menu bar app that throws confetti across every connected display.
-
-- Lives in the menu bar (party popper icon), no Dock icon.
-- Starts at login (toggle in the menu).
-- **Trigger Confetti**: full-screen, click-through overlay on all displays with geometric confetti
-  (squares, rectangles, triangles, stars, circles, hexagons, diamonds) in
-  [Open Color](https://yeun.github.io/open-color/) mid-tone colors.
-- **Play Party Sound**: optional, persisted toggle. Plays a synthesized pop + fanfare, or your own
-  file if you drop one at `~/Library/Application Support/Confetti/party.wav` (also `mp3`, `m4a`, `aiff`, `caf`).
-
-## Build & install
-
-Requires Xcode command line tools (Swift 5.9+), macOS 13+.
+Throw confetti across all your displays from the command line.
 
 ```sh
-./build.sh            # builds build/Confetti.app
-./build.sh --install  # also copies it to /Applications and launches it
+confetti            # confetti + party sound on every connected display
+confetti --silent   # no sound
 ```
 
-Keep the app in `/Applications` so the login item keeps pointing at a stable location.
+A click-through, transparent overlay fires geometric confetti (squares, rectangles, triangles,
+stars, circles, hexagons, diamonds) in [Open Color](https://yeun.github.io/open-color/) mid-tones
+from both bottom corners, followed by a short rain from the top. The process exits once the last
+piece has left the screen and the sound has finished, usually around five seconds.
 
-## Trigger from the command line
+Drop a file at `~/Library/Application Support/Confetti/party.wav` (also `mp3`, `m4a`, `aiff`,
+`caf`) to replace the built-in synthesized party sound.
+
+## Install
+
+### Homebrew
 
 ```sh
-bin/confetti            # fire confetti on all displays
-bin/confetti --silent   # fire without the party sound
-bin/confetti --sound    # fire with the party sound, even if it is turned off in the menu
+brew tap tzador/confetti https://github.com/tzador/confetti
+brew install confetti
 ```
 
-The script opens a `confetti://fire` URL, so it also launches the app if it is not running.
-Put `bin` on your `PATH` or symlink it, e.g. `ln -s "$PWD/bin/confetti" /usr/local/bin/confetti`.
+The formula builds from source with the Swift toolchain, so it needs Xcode or the
+Command Line Tools and macOS 13 or later. Locally built binaries are not quarantined,
+so there is no Gatekeeper prompt.
 
-## Testing
+### Prebuilt binary
+
+Each [release](https://github.com/tzador/confetti/releases) ships a universal (Apple Silicon
+and Intel) `confetti-vX.Y.Z-macos-universal.tar.gz`. The binary is not notarized, so after
+downloading you may need to clear the quarantine flag:
 
 ```sh
-open -n build/Confetti.app --args --fire   # launches and fires confetti immediately
+tar -xzf confetti-v*-macos-universal.tar.gz
+xattr -d com.apple.quarantine confetti
+mv confetti /usr/local/bin/
 ```
+
+### From source
+
+```sh
+swift build -c release
+.build/release/confetti
+```
+
+## Releasing
+
+Releases are built by GitHub Actions from git tags.
+
+```sh
+scripts/release.sh 0.2.0           # bumps Version.swift and the formula, commits, tags v0.2.0
+git push origin main v0.2.0
+```
+
+The workflow checks that `Version.swift` matches the tag, builds a universal binary, creates
+the GitHub release with the tarball and checksums, then updates `Formula/confetti.rb` on
+`main` with the tagged source tarball's URL and SHA-256.
+
+## Hacking
+
+Run from a terminal with `swift run confetti`. The simulation lives in
+`Sources/Confetti/ConfettiScene.swift`, shapes in `Shapes.swift`, the palette in
+`OpenColor.swift`, and the sound synth in `PartySound.swift`.

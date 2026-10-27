@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Version.swift matches the tag
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          grep -q "confettiVersion = \"$TAG\"" Sources/Confetti/Version.swift \
+            || { echo "Sources/Confetti/Version.swift does not say $TAG"; exit 1; }
+
+      - name: Build universal binary
+        run: swift build -c release --arch arm64 --arch x86_64
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp .build/apple/Products/Release/confetti dist/confetti
+          tar -C dist -czf "confetti-${GITHUB_REF_NAME}-macos-universal.tar.gz" confetti
+          shasum -a 256 confetti-*.tar.gz > checksums.txt
+          cat checksums.txt
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" confetti-*.tar.gz checksums.txt \
+            --title "$GITHUB_REF_NAME" --generate-notes
+
+  formula:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Point the formula at the tagged source tarball
+        run: |
+          URL="https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz"
+          SHA=$(curl -sL "$URL" | shasum -a 256 | cut -d' ' -f1)
+          sed -i "s|^  url \".*\"|  url \"$URL\"|" Formula/confetti.rb
+          sed -i "s|^  sha256 \".*\"|  sha256 \"$SHA\"|" Formula/confetti.rb
+          cat Formula/confetti.rb
+
+      - name: Commit the formula
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/confetti.rb
+          git diff --cached --quiet && exit 0
+          git commit -m "Formula: ${GITHUB_REF_NAME}"
+          git push origin main

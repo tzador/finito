@@ -6,9 +6,9 @@
       "args": [],
       "cwd": "${workspaceFolder:confetti}",
       "name": "Debug Confetti",
-      "target": "Confetti",
+      "target": "confetti",
       "configuration": "debug",
-      "preLaunchTask": "swift: Build Debug Confetti"
+      "preLaunchTask": "swift: Build Debug confetti"
     },
     {
       "type": "swift",
@@ -16,9 +16,29 @@
       "args": [],
       "cwd": "${workspaceFolder:confetti}",
       "name": "Release Confetti",
-      "target": "Confetti",
+      "target": "confetti",
       "configuration": "release",
-      "preLaunchTask": "swift: Build Release Confetti"
+      "preLaunchTask": "swift: Build Release confetti"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:confetti}",
+      "name": "Debug confetti",
+      "target": "confetti",
+      "configuration": "debug",
+      "preLaunchTask": "swift: Build Debug confetti"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:confetti}",
+      "name": "Release confetti",
+      "target": "confetti",
+      "configuration": "release",
+      "preLaunchTask": "swift: Build Release confetti"
     }
   ]
 }
