@@ -2,7 +2,7 @@ class Finito < Formula
   desc "Blow autumn leaves across all your displays from the command-line"
   homepage "https://github.com/tzador/finito"
   url "https://github.com/tzador/finito/archive/refs/tags/v0.6.0.tar.gz"
-  sha256 "0f99127456ebda8523bac753f2385ab88f16ce914aaa6207c48b7b1f08f801eb"
+  sha256 "21b90c22c71abf10e0356db9407c62f209dd277176c37aa79628b7302f4f8775"
   license "MIT"
   head "https://github.com/tzador/finito.git", branch: "main"
 
