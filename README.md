@@ -6,12 +6,15 @@ a finished task, or a merged PR with a single command.
 ```sh
 finito            # confetti + party sound on every connected display
 finito --silent   # no sound
+finito --wait     # block until the show is over (useful in scripts)
 ```
 
 A click-through, transparent overlay fires geometric confetti (squares, rectangles, triangles,
 stars, circles, hexagons, diamonds) in [Open Color](https://yeun.github.io/open-color/) mid-tones
-from both bottom corners, followed by a short rain from the top. The process exits once the last
-piece has left the screen and the sound has finished, usually within a few seconds.
+from both bottom corners, followed by a short rain from the top. The command returns immediately
+and the show plays out in a detached background process, so your terminal is free right away.
+Pass `--wait` to block until the last piece has left the screen and the sound has finished,
+usually within a few seconds.
 
 Drop a file at `~/Library/Application Support/Finito/party.wav` (also `mp3`, `m4a`, `aiff`,
 `caf`) to replace the built-in synthesized party sound.

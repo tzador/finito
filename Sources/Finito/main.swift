@@ -4,6 +4,7 @@ import AppKit
 
 struct Options {
     var playSound = true
+    var wait = false
 
     static let usage = """
     finito \(finitoVersion) — throw confetti across all your displays
@@ -12,6 +13,7 @@ struct Options {
 
     Options:
       -s, --silent      do not play the party sound
+      -w, --wait        stay in the foreground until the animation and sound finish
       -v, --version     print the version and exit
       -h, --help        show this help and exit
 
@@ -25,6 +27,8 @@ struct Options {
             switch arg {
             case "-s", "--silent", "--no-sound":
                 options.playSound = false
+            case "-w", "--wait":
+                options.wait = true
             case "-v", "--version":
                 print(finitoVersion)
                 exit(0)
@@ -78,7 +82,20 @@ final class CLIDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-let options = Options.parse(Array(CommandLine.arguments.dropFirst()))
+let arguments = Array(CommandLine.arguments.dropFirst())
+let options = Options.parse(arguments)
+
+// By default, hand the show off to a detached copy of ourselves and return the terminal
+// immediately. `--wait` keeps the original blocking behaviour for scripts that need it.
+if !options.wait {
+    do {
+        _ = try spawnDetached(arguments: arguments + ["--wait"])
+        exit(0)
+    } catch {
+        FileHandle.standardError.write("finito: \(error); running in the foreground\n".data(using: .utf8)!)
+    }
+}
+
 let app = NSApplication.shared
 let delegate = CLIDelegate(options: options)
 app.delegate = delegate
